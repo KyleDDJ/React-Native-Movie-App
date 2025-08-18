@@ -1,3 +1,5 @@
+import { ROUTES } from "@/constants/routes";
+
 export const TMDB_CONFIG = {
     BASE_URL: "https://api.themoviedb.org/3",
     API_KEY: process.env.EXPO_PUBLIC_MOVIE_API_KEY,
@@ -8,21 +10,22 @@ export const TMDB_CONFIG = {
 }
 
 
-export const fetchMovies = async ({ query } : { query : string}) => {
-    const endpoiint = query
-        ?`${TMDB_CONFIG.BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
-        :`${TMDB_CONFIG.BASE_URL}/discover/movie?_sort_by=popularity.desc`
+export const fetchMovies = async ({ query }: { query: string }) => {
+  const endpoint = query
+    ? `${TMDB_CONFIG.BASE_URL}${ROUTES.search_movies}${encodeURIComponent(query)}`
+    : `${TMDB_CONFIG.BASE_URL}${ROUTES.discover_movies}`;
+ 
+    
+  const response = await fetch(endpoint, {
+    method: "GET",
+    headers: TMDB_CONFIG.headers,
+  });
 
-    const response = await fetch(endpoiint, {
-        method: 'GET',
-        headers: TMDB_CONFIG.headers 
-    });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch movies: ${response.statusText}`);
+  }
 
-    if (!response.ok) {
-        throw new Error(`Failed to fetch movies: ${response.statusText}`);
-    }
+  const data = await response.json();
 
-    const data = await response.json();
-    return data.results;
-
-}
+  return data.results;
+};
