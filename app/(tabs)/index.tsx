@@ -1,12 +1,20 @@
+/**
+ * Home Screen (Index)
+ *
+ * - Displays a search bar, trending movies, and latest movies.
+ * - Fetches movie data from TMDB and Appwrite.
+ * - Uses custom components: SearchBar, TrendingCard, MovieCard.
+ */
+
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import TrendingCard from "@/components/trendingCard";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
-import { fetchMovies } from "@/services/api";
-import { getTrendingMovies } from "@/services/appwrite";
-import useFetch from "@/services/useFetch";
-import { useRouter } from "expo-router";
+import { fetchMovies } from "@/services/api"; // Fetch movies from TMDB
+import { getTrendingMovies } from "@/services/appwrite"; // Fetch trending movies from Appwrite DB
+import useFetch from "@/services/useFetch"; // Custom hook for fetching data
+import { useRouter } from "expo-router"; // Navigation
 import {
   ActivityIndicator,
   FlatList,
@@ -19,12 +27,20 @@ import {
 export default function Index() {
   const router = useRouter();
 
+  /**
+   * Fetch trending movies from Appwrite.
+   * `useFetch` handles loading, error, and data states.
+   */
   const {
     data: trendingMovies,
     loading: trendingLoading,
     error: trendingError,
   } = useFetch(getTrendingMovies);
 
+  /**
+   * Fetch latest movies from TMDB.
+   * Uses `fetchMovies` with an empty query to get recent/popular results.
+   */
   const {
     data: movies,
     loading: moviesLoading,

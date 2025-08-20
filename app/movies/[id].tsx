@@ -30,7 +30,6 @@ const MovieDetails = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [savedDocId, setSavedDocId] = useState<string | null>(null);
 
-  // Check if the movie is already saved
   useEffect(() => {
     const checkSaved = async () => {
       if (!movie) return;
@@ -81,7 +80,7 @@ const MovieDetails = () => {
             <Text className="text-white font-bold text-xl flex-1">
               {movie?.title}
             </Text>
-            {/* Save icon beside title */}
+
             <TouchableOpacity onPress={toggleSave}>
               <Image
                 source={icons.save}
@@ -136,7 +135,6 @@ const MovieDetails = () => {
         </View>
       </ScrollView>
 
-      {/* Go Back Button */}
       <TouchableOpacity
         className="absolute bottom-5 left-0 right-0 mx-5 bg-accent rounded-lg py-3.5 flex flex-row items-center justify-center z-50"
         onPress={router.back}

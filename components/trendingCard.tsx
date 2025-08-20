@@ -4,13 +4,13 @@ import { Link } from "expo-router";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
-const trendingCard = ({
+const TrendingCard = ({
   movie: { movie_id, title, poster_url },
   index,
 }: TrendingCardProps) => {
   return (
     <Link href={`/movies/${movie_id}`} asChild>
-      <TouchableOpacity className="w-32 relaive pl-5">
+      <TouchableOpacity className="w-32 relative pl-5">
         <Image
           source={{ uri: poster_url }}
           className="w-32 h-48 rounded-lg"
@@ -24,7 +24,7 @@ const trendingCard = ({
           >
             <Image
               source={images.rankingGradient}
-              className="size-14"
+              className="w-14 h-14"
               resizeMode="cover"
             />
           </MaskedView>
@@ -40,4 +40,4 @@ const trendingCard = ({
   );
 };
 
-export default trendingCard;
+export default TrendingCard;

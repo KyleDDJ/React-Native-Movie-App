@@ -1,3 +1,12 @@
+/**
+ * Search Screen
+ *
+ * - Allows users to search for movies using TMDB API (`fetchMovies`).
+ * - Displays results in a 3-column grid of `MovieCard` components.
+ * - Debounces input (500ms delay before fetching results).
+ * - Tracks search count in Appwrite (`updateSearchCount`).
+ */
+
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import { icons } from "@/constants/icons";
@@ -11,6 +20,11 @@ import { ActivityIndicator, FlatList, Image, Text, View } from "react-native";
 const search = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
+  /**
+   * Fetch movies from TMDB based on `searchQuery`.
+   * - `useFetch` is initialized with fetchMovies but won't auto-run (`false`).
+   * - Controlled manually via `loadMovies`.
+   */
   const {
     data: movies,
     loading,
@@ -25,6 +39,11 @@ const search = () => {
     false
   );
 
+  /**
+   * Debounced search effect.
+   * - Waits 500ms after user stops typing before fetching.
+   * - Clears results if input is empty.
+   */
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
       if (searchQuery.trim()) {
@@ -34,9 +53,14 @@ const search = () => {
       }
     }, 500);
 
-    return () => clearTimeout(timeoutId);
+    return () => clearTimeout(timeoutId); // Cleanup on re-typing
   }, [searchQuery]);
 
+  /**
+   * Track searches in Appwrite.
+   * - Updates search count when results are found.
+   * - Uses the first movie in results for analytics.
+   */
   useEffect(() => {
     if (movies?.length > 0 && movies?.[0])
       updateSearchCount(searchQuery, movies[0]);
