@@ -8,7 +8,7 @@
 
 import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
-import TrendingCard from "@/components/trendingCard";
+import TrendingCard from "@/components/TrendingCard";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetchMovies } from "@/services/api"; // Fetch movies from TMDB

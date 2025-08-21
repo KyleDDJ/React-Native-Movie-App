@@ -51,11 +51,24 @@ export const getTrendingMovies = async (): Promise<TrendingMovie[] | undefined> 
 
 // 
 export const saveMovie = async (movie: Movie) => {
-  return database.createDocument(DATABASE_ID, SAVED_COLLECTION_ID, ID.unique(), {
-    movie_id: movie.id.toString(),
-    title: movie.title,
-    poster_path: movie.poster_path || ""
-  });
+  const genreIds =
+    movie.genre_ids && movie.genre_ids.length > 0
+      ? movie.genre_ids
+      : movie.genres
+      ? movie.genres.map((g: { id: number }) => g.id)
+      : [];
+
+  return database.createDocument(
+    DATABASE_ID,
+    SAVED_COLLECTION_ID,
+    ID.unique(),
+    {
+      movie_id: movie.id.toString(),
+      title: movie.title,
+      poster_path: movie.poster_path || "",
+      genre_ids: genreIds,
+    }
+  );
 };
 
 export const removeSavedMovie = async (docId: string) => {

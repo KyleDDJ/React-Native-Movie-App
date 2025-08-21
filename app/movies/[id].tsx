@@ -6,6 +6,7 @@ import {
   saveMovie,
 } from "@/services/appwrite";
 import useFetch from "@/services/useFetch";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -70,7 +71,7 @@ const MovieDetails = () => {
             source={{
               uri: `https://image.tmdb.org/t/p/w500${movie?.poster_path}`,
             }}
-            className="w-full h-[500px]"
+            className="w-full h-[600px]"
             resizeMode="cover"
           />
         </View>
@@ -82,13 +83,10 @@ const MovieDetails = () => {
             </Text>
 
             <TouchableOpacity onPress={toggleSave}>
-              <Image
-                source={icons.save}
-                style={{
-                  width: 28,
-                  height: 28,
-                  tintColor: isSaved ? "#FFD700" : "#FFF",
-                }}
+              <MaterialIcons
+                name={isSaved ? "bookmark-added" : "bookmark-add"}
+                size={30}
+                color={isSaved ? "#AB8BFF" : "#FFF"}
               />
             </TouchableOpacity>
           </View>

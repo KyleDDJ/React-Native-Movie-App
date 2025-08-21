@@ -9,7 +9,6 @@ export const TMDB_CONFIG = {
     }
 }
 
-
 export const fetchMovies = async ({ query }: { query: string }) => {
   const endpoint = query
     ? `${TMDB_CONFIG.BASE_URL}${ROUTES.search_movies}${encodeURIComponent(query)}`
@@ -47,3 +46,23 @@ export const fetchMovieDetails = async (movieId: string): Promise<MovieDetails> 
     throw error;
   }
 }
+
+export const fetchGenres = async () => {
+  try {
+    const response = await fetch(
+      `${TMDB_CONFIG.BASE_URL}/genre/movie/list?language=en`,
+      {
+        method: "GET",
+        headers: TMDB_CONFIG.headers,
+      }
+    );
+
+    if (!response.ok) throw new Error("Failed to fetch genres");
+
+    const data = await response.json();
+    return data.genres;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};

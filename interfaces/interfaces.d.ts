@@ -1,4 +1,5 @@
 interface Movie {
+  genres: any;
   id: number;
   title: string;
   adult: boolean;

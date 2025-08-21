@@ -1,45 +1,90 @@
-// Import function to fetch user's saved movies from Appwrite backend
-import { getSavedMovies } from "@/services/appwrite";
+/**
+ * Saved Screen
+ *
+ * Features:
+ * - Fetches and displays movies saved by the user (from Appwrite backend).
+ * - Fetches TMDB genres and provides filter buttons (chips).
+ * - Allows filtering saved movies by selected genre.
+ * - Displays movies in a responsive 2-column grid layout.
+ * - Clicking a movie navigates to its detail page.
+ */
 
-// Import router from Expo for navigation (to movie detail pages)
+import { fetchGenres } from "@/services/api"; // Fetch TMDB
+import { getSavedMovies } from "@/services/appwrite"; // Fetch user's saved movies
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   FlatList,
   Image,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 
-// Get screen width → used to calculate movie card width (2 per row)
+// Get screen width for responsive card layout
 const { width } = Dimensions.get("window");
-const CARD_WIDTH = (width - 40) / 2; // subtract margin then divide by 2
+const CARD_WIDTH = (width - 40) / 2; // Each card takes half the screen width with padding
 
 const Saved = () => {
-  const router = useRouter(); // for navigation
-  const [savedMovies, setSavedMovies] = useState<any[]>([]); // state for saved movies
+  const router = useRouter();
 
-  // Fetch saved movies when component mounts
+  // State: user's saved movies
+  const [savedMovies, setSavedMovies] = useState<any[]>([]);
+
+  // State: TMDB genres (Action, Comedy, etc.)
+  const [genres, setGenres] = useState<any[]>([]);
+
+  // State: currently selected genre filter
+  const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
+
+  /**
+   * Fetch user's saved movies from Appwrite when screen mounts
+   */
   useEffect(() => {
     const fetchSaved = async () => {
-      const res = await getSavedMovies(); // fetch from Appwrite
-      setSavedMovies(res || []); // fallback to empty array if nothing is returned
+      const res = await getSavedMovies();
+      setSavedMovies(res || []);
     };
     fetchSaved();
   }, []);
 
-  // Navigate to movie detail screen when card is clicked
+  /**
+   * Fetch list of TMDB genres when screen mounts
+   */
+  useEffect(() => {
+    const loadGenres = async () => {
+      const list = await fetchGenres();
+      setGenres(list);
+    };
+    loadGenres();
+  }, []);
+
+  /**
+   * Handle navigation to movie details page
+   */
   const handlePress = (movie: any) => {
     router.push(`/movies/${movie.movie_id}`);
   };
 
-  // Render each saved movie card
+  /**
+   * Filter movies based on selected genre
+   * - If no genre selected, show all saved movies
+   * - Otherwise filter by `movie.genre_ids`
+   */
+  const filteredMovies =
+    selectedGenre === null
+      ? savedMovies
+      : savedMovies.filter((movie) => movie.genre_ids?.includes(selectedGenre));
+
+  /**
+   * Render a single movie card
+   */
   const renderMovie = ({ item }: { item: any }) => (
     <TouchableOpacity onPress={() => handlePress(item)} activeOpacity={0.7}>
       <View
-        className="bg-gray-800 rounded-2xl mb-4 overflow-hidden"
+        className="rounded-2xl mb-4 overflow-hidden"
         style={{ width: CARD_WIDTH, marginRight: 10 }}
       >
         <Image
@@ -53,15 +98,56 @@ const Saved = () => {
 
   return (
     <View className="bg-primary flex-1 px-5 pt-10">
-      <Text className="text-white text-xl font-bold mb-6 text-left">
-        Saved Movies
-      </Text>
+      <Text className="text-white text-xl font-bold mb-6 text-left">Saved</Text>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        className="mb-4"
+      >
+        <TouchableOpacity
+          onPress={() => setSelectedGenre(null)}
+          className={`mr-2 rounded-full items-center mb-2 justify-center ${
+            selectedGenre === null ? "bg-accent" : "bg-dark-200"
+          }`}
+          style={{ paddingHorizontal: 16, height: 36 }}
+        >
+          <Text
+            className="text-white text-sm font-medium"
+            style={{ lineHeight: 16 }}
+            numberOfLines={1}
+          >
+            All
+          </Text>
+        </TouchableOpacity>
+
+        {genres.map((genre) => (
+          <TouchableOpacity
+            key={genre.id}
+            onPress={() => setSelectedGenre(genre.id)}
+            className={`mr-2 rounded-full items-center justify-center ${
+              selectedGenre === genre.id ? "bg-accent" : "bg-dark-200"
+            }`}
+            style={{ paddingHorizontal: 16, height: 36 }}
+          >
+            <Text
+              className="text-white text-sm font-medium"
+              style={{ lineHeight: 16 }}
+              numberOfLines={1}
+            >
+              {genre.name}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
       <FlatList
-        data={savedMovies}
+        data={filteredMovies}
         renderItem={renderMovie}
         keyExtractor={(item) => item.$id}
         numColumns={2}
         columnWrapperStyle={{
+          flexGrow: 1,
           justifyContent: "space-between",
           marginBottom: 10,
         }}
