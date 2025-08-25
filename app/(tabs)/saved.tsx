@@ -12,7 +12,7 @@
 import { fetchGenres } from "@/services/api"; // Fetch TMDB
 import { getSavedMovies } from "@/services/appwrite"; // Fetch user's saved movies
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -30,25 +30,31 @@ const CARD_WIDTH = (width - 40) / 2; // Each card takes half the screen width wi
 const Saved = () => {
   const router = useRouter();
 
+  // State: pull to reload the movies
+  const [refreshing, setRefreshing] = useState(false);
   // State: user's saved movies
   const [saved_movies, setSavedMovies] = useState<any[]>([]);
-
   // State: TMDB genres (Action, Comedy, etc.)
   const [genres, setGenres] = useState<any[]>([]);
-
   // State: currently selected genre filter
   const [selected_genre, setSelectedGenre] = useState<number | null>(null);
+
+  const fetchSaved = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      const response = await getSavedMovies();
+      setSavedMovies(response || []);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
 
   /**
    * Fetch user's saved movies from Appwrite when screen mounts
    */
   useEffect(() => {
-    const fetchSaved = async () => {
-      const response = await getSavedMovies();
-      setSavedMovies(response || []);
-    };
     fetchSaved();
-  }, []);
+  }, [fetchSaved]);
 
   /**
    * Fetch list of TMDB genres when screen mounts
@@ -154,6 +160,8 @@ const Saved = () => {
           justifyContent: "space-between",
           marginBottom: 10,
         }}
+        refreshing={refreshing}
+        onRefresh={fetchSaved}
       />
     </View>
   );
