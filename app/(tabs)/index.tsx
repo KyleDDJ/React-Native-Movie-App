@@ -33,7 +33,7 @@ export default function Index() {
    */
   const {
     data: trendingMovies,
-    loading: trendingLoading,
+    is_loading: trendingLoading,
     error: trendingError,
   } = useFetch(getTrendingMovies);
 
@@ -43,7 +43,7 @@ export default function Index() {
    */
   const {
     data: movies,
-    loading: moviesLoading,
+    is_loading: moviesLoading,
     error: moviesError,
   } = useFetch(() =>
     fetchMovies({

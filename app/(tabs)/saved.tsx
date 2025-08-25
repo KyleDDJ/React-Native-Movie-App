@@ -31,21 +31,21 @@ const Saved = () => {
   const router = useRouter();
 
   // State: user's saved movies
-  const [savedMovies, setSavedMovies] = useState<any[]>([]);
+  const [saved_movies, setSavedMovies] = useState<any[]>([]);
 
   // State: TMDB genres (Action, Comedy, etc.)
   const [genres, setGenres] = useState<any[]>([]);
 
   // State: currently selected genre filter
-  const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
+  const [selected_genre, setSelectedGenre] = useState<number | null>(null);
 
   /**
    * Fetch user's saved movies from Appwrite when screen mounts
    */
   useEffect(() => {
     const fetchSaved = async () => {
-      const res = await getSavedMovies();
-      setSavedMovies(res || []);
+      const response = await getSavedMovies();
+      setSavedMovies(response || []);
     };
     fetchSaved();
   }, []);
@@ -74,9 +74,11 @@ const Saved = () => {
    * - Otherwise filter by `movie.genre_ids`
    */
   const filteredMovies =
-    selectedGenre === null
-      ? savedMovies
-      : savedMovies.filter((movie) => movie.genre_ids?.includes(selectedGenre));
+    selected_genre === null
+      ? saved_movies
+      : saved_movies.filter((movie) =>
+          movie.genre_ids?.includes(selected_genre)
+        );
 
   /**
    * Render a single movie card
@@ -84,7 +86,7 @@ const Saved = () => {
   const renderMovie = ({ item }: { item: any }) => (
     <TouchableOpacity onPress={() => handlePress(item)} activeOpacity={0.7}>
       <View
-        className="rounded-2xl mb-4 overflow-hidden"
+        className="mb_4 rounded-2xl mb-4 overflow-hidden"
         style={{ width: CARD_WIDTH, marginRight: 10 }}
       >
         <Image
@@ -101,21 +103,21 @@ const Saved = () => {
       <Text className="text-white text-xl font-bold mb-6 text-left">Saved</Text>
 
       <ScrollView
-        horizontal
         showsHorizontalScrollIndicator={false}
+        horizontal
         className="mb-4"
       >
         <TouchableOpacity
           onPress={() => setSelectedGenre(null)}
           className={`mr-2 rounded-full items-center mb-2 justify-center ${
-            selectedGenre === null ? "bg-accent" : "bg-dark-200"
+            selected_genre === null ? "bg-accent" : "bg-dark-200"
           }`}
           style={{ paddingHorizontal: 16, height: 36 }}
         >
           <Text
-            className="text-white text-sm font-medium"
             style={{ lineHeight: 16 }}
             numberOfLines={1}
+            className="text-white text-sm font-medium"
           >
             All
           </Text>
@@ -126,14 +128,14 @@ const Saved = () => {
             key={genre.id}
             onPress={() => setSelectedGenre(genre.id)}
             className={`mr-2 rounded-full items-center justify-center ${
-              selectedGenre === genre.id ? "bg-accent" : "bg-dark-200"
+              selected_genre === genre.id ? "bg-accent" : "bg-dark-200"
             }`}
             style={{ paddingHorizontal: 16, height: 36 }}
           >
             <Text
-              className="text-white text-sm font-medium"
               style={{ lineHeight: 16 }}
               numberOfLines={1}
+              className="text-white text-sm font-medium"
             >
               {genre.name}
             </Text>
@@ -146,12 +148,12 @@ const Saved = () => {
         renderItem={renderMovie}
         keyExtractor={(item) => item.$id}
         numColumns={2}
+        contentContainerStyle={{ paddingBottom: 20 }}
         columnWrapperStyle={{
           flexGrow: 1,
           justifyContent: "space-between",
           marginBottom: 10,
         }}
-        contentContainerStyle={{ paddingBottom: 20 }}
       />
     </View>
   );

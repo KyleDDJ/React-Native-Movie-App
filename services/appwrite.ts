@@ -5,7 +5,7 @@ const COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID!; // Metric
 const SAVED_COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_SAVED_COLLECTION_ID!; // Saved movies
 
 const client = new Client()
-  .setEndpoint("https://nyc.cloud.appwrite.io/v1")
+  .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!)
   .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!);
 
 const database = new Databases(client);
@@ -49,7 +49,6 @@ export const getTrendingMovies = async (): Promise<TrendingMovie[] | undefined> 
   }
 };
 
-// 
 export const saveMovie = async (movie: Movie) => {
   const genreIds =
     movie.genre_ids && movie.genre_ids.length > 0

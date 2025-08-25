@@ -28,8 +28,8 @@ const MovieInfo = ({ label, value }: MovieInfoProps) => (
 const MovieDetails = () => {
   const { id } = useLocalSearchParams();
   const { data: movie } = useFetch(() => fetchMovieDetails(id as string));
-  const [isSaved, setIsSaved] = useState(false);
-  const [savedDocId, setSavedDocId] = useState<string | null>(null);
+  const [is_saved, setIsSaved] = useState(false);
+  const [saved_doc_id, setSavedDocId] = useState<string | null>(null);
 
   useEffect(() => {
     const checkSaved = async () => {
@@ -47,8 +47,8 @@ const MovieDetails = () => {
   const toggleSave = async () => {
     if (!movie) return;
     try {
-      if (isSaved && savedDocId) {
-        await removeSavedMovie(savedDocId);
+      if (is_saved && saved_doc_id) {
+        await removeSavedMovie(saved_doc_id);
         setIsSaved(false);
         setSavedDocId(null);
         console.log("Removed from saved");
@@ -62,6 +62,9 @@ const MovieDetails = () => {
       console.log("Error saving/removing:", err);
     }
   };
+
+  const formatMillions = (num?: number) =>
+    num ? `$${Math.round(num / 1_000_000)}M` : "N/A";
 
   return (
     <View className="bg-primary flex-1">
@@ -84,9 +87,9 @@ const MovieDetails = () => {
 
             <TouchableOpacity onPress={toggleSave}>
               <MaterialIcons
-                name={isSaved ? "bookmark-added" : "bookmark-add"}
+                name={is_saved ? "bookmark-added" : "bookmark-add"}
                 size={30}
-                color={isSaved ? "#AB8BFF" : "#FFF"}
+                color={is_saved ? "#AB8BFF" : "#FFF"}
               />
             </TouchableOpacity>
           </View>
@@ -114,14 +117,8 @@ const MovieDetails = () => {
             value={movie?.genres?.map((g) => g.name).join(" - ") || "N/A"}
           />
           <View className="flex flex-row justify-between w-1/2">
-            <MovieInfo
-              label="Budget"
-              value={`$${(movie?.budget ?? 0) / 1_000_000} million`}
-            />
-            <MovieInfo
-              label="Revenue"
-              value={`$${Math.round((movie?.revenue ?? 0) / 1_000_000)}`}
-            />
+            <MovieInfo label="Budget" value={formatMillions(movie?.budget)} />
+            <MovieInfo label="Revenue" value={formatMillions(movie?.revenue)} />
           </View>
           <MovieInfo
             label="Production Companies"

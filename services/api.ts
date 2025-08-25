@@ -1,7 +1,7 @@
 import { ROUTES } from "@/constants/routes";
 
 export const TMDB_CONFIG = {
-    BASE_URL: "https://api.themoviedb.org/3",
+    BASE_URL: process.env.EXPO_PUBLIC_MOVIE_BASE_URL!,
     API_KEY: process.env.EXPO_PUBLIC_MOVIE_API_KEY,
     headers: {
         accept: "application/json",

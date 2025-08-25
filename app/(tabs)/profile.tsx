@@ -1,3 +1,4 @@
+import { settings } from "@/constants/settings";
 import React, { useState } from "react";
 import {
   Image,
@@ -9,58 +10,12 @@ import {
   View,
 } from "react-native";
 
-const Separator = () => <View className="h-[1px] bg-gray-700 my-3" />;
-
-const settings = [
-  {
-    section: "Profile",
-    items: [
-      { label: "Username / Avatar", color: "text-white" },
-      { label: "Email", color: "text-white" },
-    ],
-  },
-  {
-    section: "Security",
-    items: [
-      { label: "Change Password", color: "text-white" },
-      { label: "Login Activity", color: "text-white" },
-    ],
-  },
-  {
-    section: "Preferences",
-    items: [
-      { label: "Language", color: "text-white" },
-      { label: "Notifications", color: "text-white" },
-    ],
-  },
-  {
-    section: "Watchlist & History",
-    items: [
-      { label: "Manage Watchlist", color: "text-white" },
-      { label: "Recently Watched", color: "text-white" },
-    ],
-  },
-  {
-    section: "Subscription",
-    items: [
-      { label: "Plan & Billing", color: "text-white" },
-      { label: "Upgrade / Cancel", color: "text-white" },
-    ],
-  },
-  {
-    section: "Privacy",
-    items: [
-      { label: "Account Privacy", color: "text-white" },
-      { label: "Sign Out", color: "text-yellow-200" },
-      { label: "Delete Account", color: "text-red-500" },
-    ],
-  },
-];
-
 const Profile = () => {
   const [username, setUsername] = useState("John Doe");
-  const [modalVisible, setModalVisible] = useState(false);
-  const [tempName, setTempName] = useState(username);
+  const [is_modal_visible, setModalVisible] = useState(false);
+  const [temp_name, setTempName] = useState(username);
+
+  const Separator = () => <View className="h-[1px] bg-gray-700 my-3" />;
 
   const openEditModal = () => {
     setTempName(username);
@@ -68,7 +23,7 @@ const Profile = () => {
   };
 
   const saveProfile = () => {
-    setUsername(tempName);
+    setUsername(temp_name);
     setModalVisible(false);
   };
 
@@ -92,6 +47,7 @@ const Profile = () => {
             </Text>
           </TouchableOpacity>
         </View>
+
         {settings.map((section, index) => (
           <View key={index} className="mb-5">
             <Text className="text-accent text-lg mb-3 mt-3">
@@ -110,21 +66,23 @@ const Profile = () => {
             {index < settings.length - 1 && <Separator />}
           </View>
         ))}
+
         <View className="justify-center items-center">
           <Text className="text-gray-400 text-base mt-1">
             App Version: 1.0.0
           </Text>
         </View>
       </ScrollView>
-      <Modal visible={modalVisible} transparent animationType="slide">
+
+      <Modal visible={is_modal_visible} transparent animationType="slide">
         <View className="flex-1 justify-center items-center bg-black/60">
           <View className="bg-primary w-80 p-5 rounded-xl">
             <Text className="text-white text-lg font-bold mb-3">
               Edit Username
             </Text>
             <TextInput
-              value={tempName}
               onChangeText={setTempName}
+              value={temp_name}
               placeholder="Enter new username"
               placeholderTextColor="#999"
               className="bg-dark-200 text-white p-3 rounded-md mb-5"

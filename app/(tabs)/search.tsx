@@ -27,7 +27,7 @@ const search = () => {
    */
   const {
     data: movies,
-    loading,
+    is_loading,
     error,
     refetch: loadMovies,
     reset,
@@ -78,14 +78,14 @@ const search = () => {
         data={movies}
         renderItem={({ item }) => <MovieCard {...item} />}
         keyExtractor={(item) => item.id.toString()}
-        className="px-5"
+        contentContainerStyle={{ paddingBottom: 100 }}
         numColumns={3}
+        className="px-5"
         columnWrapperStyle={{
           justifyContent: "center",
           gap: 16,
           marginVertical: 16,
         }}
-        contentContainerStyle={{ paddingBottom: 100 }}
         ListHeaderComponent={
           <>
             <View className="w-full flex-row justify-center mt-20 items-center">
@@ -93,13 +93,13 @@ const search = () => {
             </View>
             <View className="my-5">
               <SearchBar
-                placeholder="Search movies..."
                 value={searchQuery}
                 onChangeText={(text: string) => setSearchQuery(text)}
+                placeholder="Search movies..."
               />
             </View>
 
-            {loading && (
+            {is_loading && (
               <ActivityIndicator
                 size="large"
                 color="#0000ff"
@@ -111,16 +111,19 @@ const search = () => {
                 Error: {error.message}
               </Text>
             )}
-            {!loading && !error && searchQuery.trim() && movies?.length > 0 && (
-              <Text className="text-xl text-white font-bold">
-                Search Results for{" "}
-                <Text className="text-accent">{searchQuery}</Text>
-              </Text>
-            )}
+            {!is_loading &&
+              !error &&
+              searchQuery.trim() &&
+              movies?.length > 0 && (
+                <Text className="text-xl text-white font-bold">
+                  Search Results for{" "}
+                  <Text className="text-accent">{searchQuery}</Text>
+                </Text>
+              )}
           </>
         }
         ListEmptyComponent={
-          !loading && !error ? (
+          !is_loading && !error ? (
             <View className="mt-10 px-5">
               <Text className="text-center text-gray-500">
                 {searchQuery.trim()
